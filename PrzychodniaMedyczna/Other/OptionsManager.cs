@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using PrzychodniaMedyczna.Database;
 using PrzychodniaMedyczna.Model;
 
@@ -18,6 +19,7 @@ namespace PrzychodniaMedyczna.Other
 
         public static void MainMenuOption1()
         {
+            Console.Title = "Przychodnia Medyczna: Wybór lekarza";
             doctorChoosing = true;
             while (doctorChoosing)
             {
@@ -108,6 +110,7 @@ namespace PrzychodniaMedyczna.Other
 
         public static void MainMenuOption2()
         {
+            Console.Title = "Przychodnia Medyczna: Rachunek/Rezygnacja z wizyty";
             visitResignation = true;
             while (visitResignation)
             {
@@ -172,6 +175,16 @@ namespace PrzychodniaMedyczna.Other
                         MenuManager.ClearScreen();
                     }
                 }
+                else if (wpis == "pdf")
+                {
+                    string[] report = {
+                        "Plepleple...",
+                        "Plepleple2..."
+                    };
+                    CreateReport(report);
+                    MenuManager.ColorText("  INFO: Stworzono nowy raport.\n", infoColor);
+                    MenuManager.ClearScreen();
+                }
                 else if (wpis == "back")
                 {
                     MenuManager.ColorText("  INFO: Wybrano powrót do poprzedniego ekranu.\n", infoColor);
@@ -188,19 +201,31 @@ namespace PrzychodniaMedyczna.Other
 
         public static void MainMenuOption3()
         {
+            Console.Title = "Przychodnia Medyczna: Porada medyczna";
+
+            Console.Clear();
+            MenuManager.DisplayLogo();
+            MenuManager.DisplayAdviceMenu();
+
             Console.WriteLine("  .     |___________________________________");
             Console.WriteLine("  | -----|- - -|''''|''''|''''|''''|''''|'##\\|__");
             Console.WriteLine("  | - -  |  cc 6    5    4    3    2    1 ### __]==----------------------");
             Console.WriteLine("  | -----|________________________________##/|");
             Console.WriteLine("  '     |'''''''''''''''''''''''''''''''''`'\n");
 
-            MenuManager.ColorText("  Dupa tam, nie ma żadnej porady, szpryca w dupę i do widzenia!\n\n", ConsoleColor.Red);
+            MenuManager.ColorText("  Chwilowo brak porady medycznej, zapraszamy później!\n\n", ConsoleColor.Red);
             MenuManager.ClearScreen();
         }
 
         public static void MainMenuOption4()
         {
-            Console.WriteLine("  Lista Aptek:");
+            Console.Title = "Przychodnia Medyczna: Apteki";
+
+            Console.Clear();
+            MenuManager.DisplayLogo();
+            MenuManager.DisplayPharmacyMenu();
+
+            Console.WriteLine("\n  Lista Aptek:");
 
             int i = 1;
             foreach (Pharmacy pharmacy in Mock._pharmacies)
@@ -216,7 +241,7 @@ namespace PrzychodniaMedyczna.Other
                     MenuManager.ColorText("       ZAMKNIĘTE!\n", ConsoleColor.Red);
                 i++;
             }
-            Console.WriteLine("");
+            Console.Write("\n\n");
             MenuManager.ClearScreen();
         }
 
@@ -231,6 +256,7 @@ namespace PrzychodniaMedyczna.Other
             {
                 loggedIn = false;
                 MenuManager.ColorText("  INFO: Dziękujemy za skorzystanie z naszych usług. Do widzenia!\n", infoColor);
+                Program.player.Stop();
                 MenuManager.ClearScreen();
             }
         }
@@ -240,6 +266,13 @@ namespace PrzychodniaMedyczna.Other
             MenuManager.ColorText("  INFO: Komenda '" + wpis + "' nie została rozpoznana i nie może zostać zrealizowana.\n", infoColor);
             MenuManager.ColorText("        Zapoznaj się z menu wyboru i spróbuj ponownie.\n", infoColor);
             MenuManager.ClearScreen();
+        }
+
+        public static void CreateReport(string[] filedata)
+        {
+            string path = AppDomain.CurrentDomain.BaseDirectory + "\\report.pdf";
+            File.WriteAllLines(path, filedata);
+            File.Open(path, FileMode.Open);
         }
     }
 }

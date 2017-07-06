@@ -47,6 +47,7 @@
     <Compile Include="Database\Mock.cs" />
     <Compile Include="Model\Doctor.cs" />
     <Compile Include="Model\Pharmacy.cs" />
+    <Compile Include="Model\Resource.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="Other\MenuManager.cs" />
     <Compile Include="Other\OptionsManager.cs" />

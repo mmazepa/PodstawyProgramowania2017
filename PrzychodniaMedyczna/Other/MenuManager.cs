@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using PrzychodniaMedyczna.Database;
 
 namespace PrzychodniaMedyczna.Other
@@ -27,19 +28,33 @@ namespace PrzychodniaMedyczna.Other
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("  ██║╚██╔╝██║██╔══╝  ██║  ██║██║██║     ██║██║╚██╗██║██╔══╝    ");
             Console.WriteLine("  ██║ ╚═╝ ██║███████╗██████╔╝██║╚██████╗██║██║ ╚████║███████╗  ");
-            Console.WriteLine("  ╚═╝     ╚═╝╚══════╝╚═════╝ ╚═╝ ╚═════╝╚═╝╚═╝  ╚═══╝╚══════╝\n");
+            Console.WriteLine("  ╚═╝     ╚═╝╚══════╝╚═════╝ ╚═╝ ╚═════╝╚═╝╚═╝  ╚═══╝╚══════╝  ");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("                                          " + DateTime.Now);
             Console.ResetColor();
+        }
+
+        public static void StartScreenMenu()
+        {
+            Console.WriteLine("");
+            Console.WriteLine("  ╔═════════════════════════════════════════════════════╗");
+            Console.WriteLine("  ║  EKRAN POWITALNY:                                   ║");
+            Console.WriteLine("  ║  Dzień dobry, co chcesz zrobić?                     ║");
+            Console.WriteLine("  ╠═════════════════════════════════════════════════════╣");
+            Console.WriteLine("  ║    1    - Zaloguj się                               ║");
+            Console.WriteLine("  ║    exit - Wyjście z aplikacji                       ║");
+            Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n");
         }
 
         public static void LoggingInMenu()
         {
             Console.WriteLine("");
-            Console.WriteLine("                      ╔═════════════╗                      ");
-            Console.WriteLine("  ╔═══════════════════╣ ZALOGUJ SIĘ ╠═══════════════════╗  ");
-            Console.WriteLine("  ║                   ╚═════════════╝                   ║  ");
-            Console.WriteLine("  ║                                                     ║  ");
-            Console.WriteLine("  ║  Podaj login i hasło, aby się zalogować...          ║  ");
-            Console.WriteLine("  ║                                                     ║  ");
+            Console.WriteLine("                      ╔═════════════╗                    ");
+            Console.WriteLine("  ╔═══════════════════╣ ZALOGUJ SIĘ ╠═══════════════════╗");
+            Console.WriteLine("  ║                   ╚═════════════╝                   ║");
+            Console.WriteLine("  ║                                                     ║");
+            Console.WriteLine("  ║  Podaj login i hasło, aby się zalogować...          ║");
+            Console.WriteLine("  ║                                                     ║");
             Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n\n");
         }
 
@@ -100,6 +115,7 @@ namespace PrzychodniaMedyczna.Other
                 Console.WriteLine("  ║  Wyświetlono listę wizyt, co chcesz zrobić?         ║");
                 Console.WriteLine("  ╠═════════════════════════════════════════════════════╣");
                 Console.WriteLine("  ║    1-" + doctorsNum + "  - Wybór konkretnej wizyty                   ║");
+                Console.WriteLine("  ║    pdf  - Utworzenie pliku PDF z raportem           ║");
             }
 
             Console.WriteLine("  ║    back - Powrót                                    ║");
@@ -129,6 +145,30 @@ namespace PrzychodniaMedyczna.Other
             }
 
             Console.WriteLine("  ║      1 - tak                2 - nie                 ║");
+            Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n");
+        }
+
+        public static void DisplayAdviceMenu()
+        {
+            DisplayUserInfo();
+            Console.WriteLine("  ╔═════════════════════════════════════════════════════╗");
+            Console.WriteLine("  ║  PORADA MEDYCZNA:                                   ║");
+            Console.WriteLine("  ║  Wyświetlono listę dostępnych porad, co chcesz      ║");
+            Console.WriteLine("  ║  zrobić?                                            ║");
+            Console.WriteLine("  ╠═════════════════════════════════════════════════════╣");
+            Console.WriteLine("  ║    1    - Porada nr 1                               ║");
+            Console.WriteLine("  ║    2    - Porada nr 2                               ║");
+            Console.WriteLine("  ║    3    - Porada nr 3                               ║");
+            Console.WriteLine("  ║    back - Powrót                                    ║");
+            Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n");
+        }
+
+        public static void DisplayPharmacyMenu()
+        {
+            DisplayUserInfo();
+            Console.WriteLine("  ╔═════════════════════════════════════════════════════╗");
+            Console.WriteLine("  ║  APTEKI:                                            ║");
+            Console.WriteLine("  ║  Wyświetlono listę aptek.                           ║");
             Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n");
         }
 

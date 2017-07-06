@@ -141,7 +141,8 @@ namespace PrzychodniaMedyczna.Database
             }
             else
             {
-                MenuManager.ColorText("\n  Hasło nieprawidłowe, do widzenia!\n", ConsoleColor.Red);
+                MenuManager.ColorText("\n  Hasło nieprawidłowe!\n", ConsoleColor.Red);
+                Program.count++;
                 return false;
             }
             return false;
