@@ -12,13 +12,14 @@ namespace PrzychodniaMedyczna
     {
         public static SoundPlayer player = new SoundPlayer();
         public static int count = 0;
+        public static string wpis = string.Empty;
 
         public static void Main(string[] args)
         {    
             string login = string.Empty;
             string passw = string.Empty;
             ConsoleKeyInfo keyInfo;
-            string wpis = string.Empty;
+            
             bool session = false;
 
             player.SoundLocation = AppDomain.CurrentDomain.BaseDirectory + "\\appTheme.wav";
@@ -26,6 +27,11 @@ namespace PrzychodniaMedyczna
 
             while (session)
             {
+                login = string.Empty;
+                passw = string.Empty;
+                wpis = string.Empty;
+                count = 0;
+
                 while (wpis != "1")
                 {
                     count = 0;
@@ -40,20 +46,16 @@ namespace PrzychodniaMedyczna
                     if (wpis == "1")
                     {
                         Console.WriteLine("");
-                        MenuManager.ColorText("  INFO: Wybrano logowanie, zapraszamy!\n", OptionsManager.infoColor);
-                        MenuManager.ClearScreen();
+                        MenuManager.InfoAlert("  INFO: Wybrano logowanie, zapraszamy!\n");
                     }
                     else if (wpis == "exit")
                     {
-                        Console.WriteLine("");
-                        MenuManager.ColorText("  INFO: Wybrano wyjście, do widzenia!\n", OptionsManager.infoColor);
-                        MenuManager.ClearScreen();
-                        Environment.Exit(0);
+                        OptionsManager.ExitConfirmation(true);
                     }
                     else
                     {
                         Console.WriteLine("");
-                        OptionsManager.MainMenuOption5("error", wpis);
+                        OptionsManager.CommandNotFound(wpis);
                     }
                 }
 
@@ -110,20 +112,33 @@ namespace PrzychodniaMedyczna
                             wpis = Console.ReadLine();
                             Console.WriteLine("");
 
-                            if (wpis == "1" && Mock.userType == "User")
-                                OptionsManager.MainMenuOption1();
-                            else if (wpis == "2" && Mock.userType == "User")
-                                OptionsManager.MainMenuOption2();
-                            else if (wpis == "3" && Mock.userType == "User")
-                                OptionsManager.MainMenuOption3();
-                            else if (wpis == "4" && Mock.userType == "User")
-                                OptionsManager.MainMenuOption4();
-                            else if (wpis == "1" && Mock.userType != "User")
-                                OptionsManager.MainMenuOption5("sorry");
-                            else if (wpis == "exit")
-                                OptionsManager.MainMenuOption5("exit");
-                            else
-                                OptionsManager.MainMenuOption5("error", wpis);
+                            // === OPCJE UŻYTKOWNIKA ==========================
+                            if (Mock.userType == "User")
+                            {
+                                if (wpis == "1")
+                                    OptionsManager.DoctorsList();
+                                else if (wpis == "2")
+                                    OptionsManager.VisitsList();
+                                else if (wpis == "3")
+                                    OptionsManager.AdvicesList();
+                                else if (wpis == "4")
+                                    OptionsManager.PharmaciesList();
+                                else if (wpis == "exit")
+                                    OptionsManager.ExitConfirmation(false);
+                                else
+                                    OptionsManager.CommandNotFound(wpis);
+                            }
+
+                            // === OPCJE ADMINISTRATORA =======================
+                            else if (Mock.userType == "Administrator")
+                            {
+                                if (wpis == "1")
+                                    OptionsManager.UsersList();
+                                else if (wpis == "exit")
+                                    OptionsManager.ExitConfirmation(false);
+                                else
+                                    OptionsManager.CommandNotFound(wpis);
+                            }
                         }
                     }
                     else
@@ -131,7 +146,7 @@ namespace PrzychodniaMedyczna
                         MenuManager.ColorText("  Użytkownik nie istnieje!\n\n", ConsoleColor.Red);
                         MenuManager.ClearScreen();
                         count++;
-                        if (count == 3 && !OptionsManager.loggedIn)
+                        if (count >= 3 && !OptionsManager.loggedIn)
                         {
                             MenuManager.DisplayLogo();
                             MenuManager.LoggingInMenu();
@@ -142,7 +157,7 @@ namespace PrzychodniaMedyczna
                             wpis = string.Empty;
                         }
                     }
-                } while (count < 3);
+                } while (count < 3 && OptionsManager.loggedIn);
             }
         }
     }

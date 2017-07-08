@@ -9,6 +9,8 @@ namespace PrzychodniaMedyczna.Other
 {
     class MenuManager
     {
+        public static ConsoleColor infoColor = ConsoleColor.Cyan;
+
         public static void DisplayLogo()
         {
             string header = "  Przychodnia Medyczna    Mariusz Mazepa    KOLOR UG 2017";
@@ -59,9 +61,7 @@ namespace PrzychodniaMedyczna.Other
         }
 
         public static void DisplayMenu()
-        {
-            // ═ ║ ╔ ╗ ╚ ╝ ╠ ╣ ╦ ╩ ╬
-            
+        {   
             DisplayUserInfo();
             Console.WriteLine("  ╔═════════════════════════════════════════════════════╗");
 
@@ -74,27 +74,30 @@ namespace PrzychodniaMedyczna.Other
                 Console.WriteLine("  ║    3    - Zasięgnij porady medycznej                ║");
                 Console.WriteLine("  ║    4    - Apteki w najbliższej okolicy              ║");
             }
-            else if (Mock.userType == "Doctor")
-            {
-                Console.WriteLine("  ║  Witamy w panelu lekarza, co chcesz zrobić?         ║");
-                Console.WriteLine("  ╠═════════════════════════════════════════════════════╣");
-                Console.WriteLine("  ║    1    - Testowa akcja lekarza                     ║");
-            }
             else if (Mock.userType == "Administrator")
             {
                 Console.WriteLine("  ║  Witamy w panelu administratora, co chcesz zrobić?  ║");
                 Console.WriteLine("  ╠═════════════════════════════════════════════════════╣");
-                Console.WriteLine("  ║    1    - Testowa akcja administratora              ║");
+                Console.WriteLine("  ║    1    - Lista zarejestrowanych użytkowników       ║");
             }
 
-            Console.WriteLine("  ║    exit - Wyjście                                   ║");
+            Console.WriteLine("  ║    exit - Wyloguj się                               ║");
             Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n");
 
-            Console.WriteLine("  Drogi użytkowniku,");
-            Console.WriteLine("    dzięki niniejszej aplikacji możesz umówić się na wizytę");
-            Console.WriteLine("    wybierając lekarza z listy lub z niej zrezygnować,");
-            Console.WriteLine("    zasięgnąć porady medycznej oraz sprawdzić najbliższe apteki.");
-            Console.WriteLine("    Wybierz opcję z powyższego menu i zatwierdź klawiszem ENTER.\n");
+            if (Mock.userType == "User")
+            {
+                Console.WriteLine("  Drogi użytkowniku,");
+                Console.WriteLine("    dzięki niniejszej aplikacji możesz umówić się na wizytę");
+                Console.WriteLine("    wybierając lekarza z listy lub z niej zrezygnować,");
+                Console.WriteLine("    zasięgnąć porady medycznej oraz sprawdzić najbliższe apteki.");
+                Console.WriteLine("    Wybierz opcję z powyższego menu i zatwierdź klawiszem ENTER.\n");
+            }
+            else if (Mock.userType == "Administrator")
+            {
+                Console.WriteLine("  Drogi administratorze,");
+                Console.WriteLine("    zakładamy, że wiesz, co masz robić, więc darujemy sobie wskazówki.");
+                Console.WriteLine("    Powodzenia!\n");
+            }
         }
 
         public static void DisplayDoctorMenu(string transaction, int doctorsNum)
@@ -124,7 +127,7 @@ namespace PrzychodniaMedyczna.Other
 
         public static void DisplayUserInfo()
         {
-            ColorText("  " + Mock.userName + ", " + Mock.userType + " [" + Mock.userWallet + "zł]\n", Mock.color);
+                ColorText("  " + Mock.loggedUser.Name + ", " + Mock.userType + " [" + Mock.loggedUser.Wallet + "zł]\n", Mock.color);
         }
 
         public static void ConfirmationMenu(int doctorIndex, string transaction)
@@ -172,6 +175,32 @@ namespace PrzychodniaMedyczna.Other
             Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n");
         }
 
+        public static void DisplayUsersMenu()
+        {
+            DisplayUserInfo();
+            Console.WriteLine("  ╔═════════════════════════════════════════════════════╗");
+            Console.WriteLine("  ║  UŻYTKOWNICY:                                       ║");
+            Console.WriteLine("  ║  Wyświetlono listę zarejestrowanych użytkowników.   ║");
+            Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n");
+        }
+
+        public static void ConfirmationExitMenu(string option)
+        {
+            Console.WriteLine();
+            Console.WriteLine("  ╔═════════════════════════════════════════════════════╗");
+
+            if (option == "exit") Console.WriteLine("  ║  ZAMYKANIE PROGRAMU:                                ║");
+            else if (option == "logout") Console.WriteLine("  ║  WYLOGOWYWANIE SIĘ:                                 ║");
+
+            Console.WriteLine("  ╠═════════════════════════════════════════════════════╣");
+
+            if (option == "exit") Console.WriteLine("  ║  Czy na pewno chcesz zakończyć pracę w programie?   ║");
+            else if (option == "logout") Console.WriteLine("  ║  Czy na pewno chcesz się wylogować?                 ║");
+
+            Console.WriteLine("  ║      1 - tak                2 - nie                 ║");
+            Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n");
+        }
+
         public static void ClearScreen()
         {
             Console.WriteLine("  Wciśnij ENTER, by kontynuować...");
@@ -185,6 +214,20 @@ namespace PrzychodniaMedyczna.Other
             Console.ForegroundColor = color;
             Console.Write(text);
             Console.ResetColor();
+        }
+
+        public static void InfoAlert(string text)
+        {
+            ColorText(text, infoColor);
+            ClearScreen();
+        }
+
+        public static void ManyChars(char character, int times)
+        {
+            for (int i = 0; i < times; i++)
+            {
+                Console.Write(character);
+            }
         }
     }
 }

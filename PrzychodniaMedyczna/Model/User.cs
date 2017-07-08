@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace PrzychodniaMedyczna.Model
 {
-    class User : Resource
+    public class User : Resource
     {
         public string Login { get; set; }
         public string Passw { get; set; }
-        public string Type { get; set; }
+        public bool IsAdmin { get; set; }
         public int Wallet { get; set; }
+        public List<UserVisit> Visits { get; set; }
     }
 }

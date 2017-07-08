@@ -10,12 +10,12 @@ namespace PrzychodniaMedyczna.Database
 {
     public static class Mock
     {
-        public static string userName;
-        public static string userType;
-        public static int userWallet;
+        public static User loggedUser;
+        public static string userType = string.Empty;
+
         public static ConsoleColor color;
 
-        private static List<User> _users = new List<User>()
+        public static List<User> _users = new List<User>()
         {
             new User()
             {
@@ -23,28 +23,53 @@ namespace PrzychodniaMedyczna.Database
                 Name = "Mariusz",
                 Login = "mmazepa",
                 Passw = "123",
-                Type = "User",
-                Wallet = 500
+                IsAdmin = false,
+                Wallet = 500,
+                Visits = new List<UserVisit>()
             },
 
             new User()
             {
                 Id = Guid.NewGuid().ToString(),
-                Name = "Leopold",
-                Login = "leon",
+                Name = "Zygfryd",
+                Login = "zygfryd",
                 Passw = "123",
-                Type = "Doctor",
-                Wallet = 500
+                IsAdmin = false,
+                Wallet = 500,
+                Visits = new List<UserVisit>()
             },
 
             new User()
             {
                 Id = Guid.NewGuid().ToString(),
-                Name = "Ryszard",
+                Name = "Stanisław",
+                Login = "stasiek",
+                Passw = "123",
+                IsAdmin = false,
+                Wallet = 500,
+                Visits = new List<UserVisit>()
+            },
+
+            new User()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Kazimierz",
+                Login = "kazik",
+                Passw = "123",
+                IsAdmin = false,
+                Wallet = 500,
+                Visits = new List<UserVisit>()
+            },
+
+            new User()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Maksymilian",
                 Login = "admin",
                 Passw = "admin1",
-                Type = "Administrator",
-                Wallet = 500
+                IsAdmin = true,
+                Wallet = 500,
+                Visits = new List<UserVisit>()
             }
         };
 
@@ -142,9 +167,9 @@ namespace PrzychodniaMedyczna.Database
             else
             {
                 MenuManager.ColorText("\n  Hasło nieprawidłowe!\n", ConsoleColor.Red);
-                Program.count++;
                 return false;
             }
+            Program.count++;
             return false;
         }
 
@@ -152,17 +177,23 @@ namespace PrzychodniaMedyczna.Database
         {
             var user = _users.FirstOrDefault(m => m.Login == login);
 
-            if (user.Type == "User") color = ConsoleColor.Green;
-            if (user.Type == "Doctor") color = ConsoleColor.Blue;
-            if (user.Type == "Administrator") color = ConsoleColor.Magenta;
+            if (!user.IsAdmin)
+            {
+                color = ConsoleColor.Green;
+                userType = "User";
+            }
+            else if (user.IsAdmin)
+            {
+                color = ConsoleColor.Yellow;
+                userType = "Administrator";
+            }
 
             Console.Write("\n\n  Witaj, ");
             MenuManager.ColorText(user.Name, color);
             Console.Write(", zostałeś zalogowany jako ");
-            MenuManager.ColorText(user.Type + "\n", color);
-            userName = user.Name;
-            userType = user.Type;
-            userWallet = user.Wallet;
+            MenuManager.ColorText(userType + "\n", color);
+
+            loggedUser = user;
         }
     }
 }
