@@ -11,7 +11,8 @@ namespace PrzychodniaMedyczna
     public class Program
     {
         public static SoundPlayer player = new SoundPlayer();
-        public static int count = 0;
+        public static int countLogin = 0;
+        public static int countPassw = 0;
         public static string wpis = string.Empty;
 
         public static void Main(string[] args)
@@ -30,134 +31,154 @@ namespace PrzychodniaMedyczna
                 login = string.Empty;
                 passw = string.Empty;
                 wpis = string.Empty;
-                count = 0;
+                countLogin = 0;
+                countPassw = 0;
 
                 while (wpis != "1")
                 {
-                    count = 0;
+                    countLogin = 0;
+                    countPassw = 0;
 
-                    MenuManager.DisplayLogo();
-                    MenuManager.StartScreenMenu();
-                    Console.Title = "Przychodnia Medyczna: Ekran powitalny";
-
+                    MenuManager.DisplayLogoAndMenu("startMenu");
+                    
                     Console.Write("  Wybór: ");
                     wpis = Console.ReadLine();
 
-                    if (wpis == "1")
+                    switch (wpis)
                     {
-                        Console.WriteLine("");
-                        MenuManager.InfoAlert("  INFO: Wybrano logowanie, zapraszamy!\n");
-                    }
-                    else if (wpis == "exit")
-                    {
-                        OptionsManager.ExitConfirmation(true);
-                    }
-                    else
-                    {
-                        Console.WriteLine("");
-                        OptionsManager.CommandNotFound(wpis);
+                        case "1":
+                            Console.WriteLine("");
+                            MenuManager.InfoAlert("  INFO: Wybrano logowanie, zapraszamy!\n");
+                            break;
+                        case "exit":
+                            OptionsManager.ExitConfirmation(true);
+                            break;
+                        default:
+                            Console.WriteLine("");
+                            OptionsManager.CommandNotFound(wpis);
+                            break;
                     }
                 }
 
+
+                // === LOGOWANIE ==========================
                 do
                 {
-                    MenuManager.DisplayLogo();
-                    MenuManager.LoggingInMenu();
-                    Console.Title = "Przychodnia Medyczna: Logowanie";
+                    MenuManager.DisplayLogoAndMenu("loginMenu");
 
-                    Console.WriteLine("  [Próba " + (count+1) + "/3]");
-                    Console.Write("  Login: ");
-                    login = Console.ReadLine();
-
-                    if (Mock.UserExistFinal(login))
+                    while (countLogin < 3)
                     {
-                        count = 3;
+                        Console.Write("  [" + (countLogin + 1) + "/3] Login: ");
+                        login = Console.ReadLine();
 
-                        Console.Write("  Hasło: ");
-                        do
+                        if (Mock.UserExistFinal(login))
                         {
-                            keyInfo = Console.ReadKey(true);
-                            if (keyInfo.Key != ConsoleKey.Backspace && keyInfo.Key != ConsoleKey.Enter)
+                            countLogin = 3;
+                            while (countPassw < 3)
                             {
-                                passw += keyInfo.KeyChar;
-                                Console.Write("*");
-                            }
-                            else if (keyInfo.Key == ConsoleKey.Backspace && passw.Length > 0)
-                            {
-                                passw = passw.Substring(0, (passw.Length - 1));
-                                Console.Write("\b \b");
-                            }
-                        }
-                        while (keyInfo.Key != ConsoleKey.Enter);
+                                Console.Write("  [" + (countPassw + 1) + "/3] Hasło: ");
+                                do
+                                {
+                                    keyInfo = Console.ReadKey(true);
+                                    if (keyInfo.Key != ConsoleKey.Backspace && keyInfo.Key != ConsoleKey.Enter)
+                                    {
+                                        passw += keyInfo.KeyChar;
+                                        Console.Write("*");
+                                    }
+                                    else if (keyInfo.Key == ConsoleKey.Backspace && passw.Length > 0)
+                                    {
+                                        passw = passw.Substring(0, (passw.Length - 1));
+                                        Console.Write("\b \b");
+                                    }
+                                }
+                                while (keyInfo.Key != ConsoleKey.Enter);
 
-                        if (Mock.CorrectCredentials(login, passw))
-                        {
-                            OptionsManager.loggedIn = true;
-                            player.PlayLooping();
+                                if (Mock.CorrectCredentials(login, passw))
+                                {
+                                    countPassw = 3;
+                                    OptionsManager.loggedIn = true;
+                                    player.PlayLooping();
+                                }
+                                else
+                                {
+                                    MenuManager.ColorText("\n  Hasło nieprawidłowe!\n\n", ConsoleColor.Red);
+                                    countPassw++;
+                                    OptionsManager.loggedIn = false;
+                                }
+                            }
                         }
                         else
                         {
-                            MenuManager.ClearScreen();
-                            OptionsManager.loggedIn = false;
+                            MenuManager.ColorText("  Login nieprawidłowy!\n\n", ConsoleColor.Red);
+                            countLogin++;
                         }
 
-                        while (OptionsManager.loggedIn)
+                        if((countLogin >= 3 || countPassw >= 3) && !OptionsManager.loggedIn)
                         {
-                            Console.Title = "Przychodnia Medyczna: Menu Główne";
-
-                            MenuManager.DisplayLogo();
-                            MenuManager.DisplayMenu();
-
-                            Console.Write("  Wybór: ");
-                            wpis = Console.ReadLine();
-                            Console.WriteLine("");
-
-                            // === OPCJE UŻYTKOWNIKA ==========================
-                            if (Mock.userType == "User")
-                            {
-                                if (wpis == "1")
-                                    OptionsManager.DoctorsList();
-                                else if (wpis == "2")
-                                    OptionsManager.VisitsList();
-                                else if (wpis == "3")
-                                    OptionsManager.AdvicesList();
-                                else if (wpis == "4")
-                                    OptionsManager.PharmaciesList();
-                                else if (wpis == "exit")
-                                    OptionsManager.ExitConfirmation(false);
-                                else
-                                    OptionsManager.CommandNotFound(wpis);
-                            }
-
-                            // === OPCJE ADMINISTRATORA =======================
-                            else if (Mock.userType == "Administrator")
-                            {
-                                if (wpis == "1")
-                                    OptionsManager.UsersList();
-                                else if (wpis == "exit")
-                                    OptionsManager.ExitConfirmation(false);
-                                else
-                                    OptionsManager.CommandNotFound(wpis);
-                            }
+                            MenuManager.ColorText("  Trzy próby zakończone niepowodzeniem, do widzenia!\n", ConsoleColor.Red);
+                            MenuManager.ClearScreen();
+                            break;
                         }
                     }
-                    else
+
+                    // === KONIEC LOGOWANIA ====================
+                    // === MENU GŁÓWNE =========================
+
+                    while (OptionsManager.loggedIn)
                     {
-                        MenuManager.ColorText("  Użytkownik nie istnieje!\n\n", ConsoleColor.Red);
-                        MenuManager.ClearScreen();
-                        count++;
-                        if (count >= 3 && !OptionsManager.loggedIn)
+                        MenuManager.DisplayLogoAndMenu("mainMenu");
+
+                        Console.Write("  Wybór: ");
+                        wpis = Console.ReadLine();
+                        Console.WriteLine("");
+
+                        // === OPCJE UŻYTKOWNIKA ==========================
+                        if (Mock.userType == "User")
                         {
-                            MenuManager.DisplayLogo();
-                            MenuManager.LoggingInMenu();
+                            switch (wpis)
+                            {
+                                case "1":
+                                    OptionsManager.DoctorsList();
+                                    break;
+                                case "2":
+                                    OptionsManager.VisitsList();
+                                    break;
+                                case "3":
+                                    OptionsManager.AdvicesList();
+                                    break;
+                                case "4":
+                                    OptionsManager.PharmaciesList();
+                                    break;
+                                case "exit":
+                                    OptionsManager.ExitConfirmation(false);
+                                    break;
+                                default:
+                                    OptionsManager.CommandNotFound(wpis);
+                                    break;
+                            }
+                        }
 
-                            MenuManager.ColorText("  Trzy próby zakończone niepowodzeniem, do widzenia.\n", ConsoleColor.Red);
-                            MenuManager.ClearScreen();
-
-                            wpis = string.Empty;
+                        // === OPCJE ADMINISTRATORA =======================
+                        else if (Mock.userType == "Administrator")
+                        {
+                            switch (wpis)
+                            {
+                                case "1":
+                                    OptionsManager.AdminUsersList();
+                                    break;
+                                case "2":
+                                    OptionsManager.AdminDoctorsList();
+                                    break;
+                                case "exit":
+                                    OptionsManager.ExitConfirmation(false);
+                                    break;
+                                default:
+                                    OptionsManager.CommandNotFound(wpis);
+                                    break;
+                            }
                         }
                     }
-                } while (count < 3 && OptionsManager.loggedIn);
+                } while (countLogin < 3 && countPassw < 3 && OptionsManager.loggedIn);
             }
         }
     }

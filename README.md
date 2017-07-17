@@ -22,7 +22,7 @@ Aplikacja oferuje kilka podstawowych manewrów przydatnych u¿ytkownikowi-pacjento
 Nale¿¹ do nich m.in.:
 
 * wybór lekarza i zarezerwowanie wizyty,
-* podgl¹d/podsumowanie rachunku (planowany rozwój o generowanie rachunku PDF),
+* podgl¹d/podsumowanie i generowanie rachunku DOC,
 * rezygnacja z zarezerwowanych wizyt,
 * zasiêgniêcie porady medycznej z "bazy" dostêpnych porad,
 * sprawdzenie aptek (adresu, telefonu, godzin otwarcia),
@@ -31,4 +31,5 @@ Nale¿¹ do nich m.in.:
 Warto równie¿ nadmieniæ funkcjonalnoœæ konta administratora:
 
 * zarz¹dzanie kontami u¿ytkowników (na chwilê obecn¹ tylko wyœwietlanie listy),
+* dodawanie lekarzy do bazy (planowany rozwój do pe³nego CRUD'a),
 * ...ci¹g dalszy nast¹pi...

@@ -157,7 +157,13 @@ namespace PrzychodniaMedyczna.Database
         public static bool CorrectCredentials(string login, string passw)
         {
             var user = _users.FirstOrDefault(m => m.Login == login);
-            if (user == null) MenuManager.ColorText("  Użytkownik nie istnieje!\n\n", ConsoleColor.Red);
+
+            if (user == null)
+            {
+                MenuManager.ColorText("  Użytkownik nie istnieje!\n\n", ConsoleColor.Red);
+                Program.countLogin++;
+                return false;
+            }
             else if (user.Passw == passw)
             {
                 HelloUser(user.Login);
@@ -166,11 +172,8 @@ namespace PrzychodniaMedyczna.Database
             }
             else
             {
-                MenuManager.ColorText("\n  Hasło nieprawidłowe!\n", ConsoleColor.Red);
                 return false;
             }
-            Program.count++;
-            return false;
         }
 
         public static void HelloUser(string login)
