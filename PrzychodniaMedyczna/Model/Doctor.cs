@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using PrzychodniaMedyczna.Database;
 using PrzychodniaMedyczna.Other;
 
@@ -29,7 +30,9 @@ namespace PrzychodniaMedyczna.Model
             Console.Clear();
             MenuManager.DisplayLogoAndMenu("adminAddDoctorMenu");
 
-            Object[] docInfo = CheckDoctorInfo();
+            Console.WriteLine("  PROSZĘ UZUPEŁNIĆ PONIŻSZE POLA:\n");
+
+            Object[] docInfo = CheckDoctorInfo(-1);
             firstName = docInfo[0].ToString();
             lastName = docInfo[1].ToString();
             specialisation = docInfo[2].ToString();
@@ -83,9 +86,11 @@ namespace PrzychodniaMedyczna.Model
             Console.Clear();
             MenuManager.DisplayLogoAndMenu("adminEditDoctorMenu");
 
+            Console.WriteLine("  STARE DANE:\n");
             DisplayDoctorInfo(doctorIndex);
 
-            Object[] docInfo = CheckDoctorInfo();
+            Console.WriteLine("  NOWE DANE:\n");
+            Object[] docInfo = CheckDoctorInfo(doctorIndex);
             name[1] = "dr " + docInfo[0].ToString() + " " + docInfo[1].ToString();
             specialisation[1] = docInfo[2].ToString();
             price[1] = (int)docInfo[3];
@@ -146,7 +151,7 @@ namespace PrzychodniaMedyczna.Model
             else MenuManager.InfoAlert("  INFO: Nie ma takiego lekarza na liście!\n");
         }
 
-        public static Object[] CheckDoctorInfo()
+        public static Object[] CheckDoctorInfo(int doctorIndex)
         {
             string firstName = string.Empty;
             string lastName = string.Empty;
@@ -157,10 +162,18 @@ namespace PrzychodniaMedyczna.Model
             string visitsAvailable = string.Empty;
             int parsedVisitsAvailable = 0;
 
+            string[] nameInfo = new string[3];
+
+            if(doctorIndex != -1)
+            {
+                nameInfo = Mock._doctors[doctorIndex].Name.Split(' ');
+            }
+
             bool doctorEditor = true;
             while (doctorEditor)
             {
                 Console.Write("    IMIĘ:           ");
+                if(doctorIndex != -1) SendKeys.SendWait(nameInfo[1]);
                 firstName = Console.ReadLine();
                 if (OptionsManager.CheckString(firstName) && OptionsManager.StringValidation(firstName, 3)) doctorEditor = false;
             }
@@ -169,6 +182,7 @@ namespace PrzychodniaMedyczna.Model
             while (doctorEditor)
             {
                 Console.Write("    NAZWISKO:       ");
+                if (doctorIndex != -1) SendKeys.SendWait(nameInfo[2]);
                 lastName = Console.ReadLine();
                 if (OptionsManager.CheckString(lastName) && OptionsManager.StringValidation(lastName, 3)) doctorEditor = false;
             }
@@ -177,6 +191,7 @@ namespace PrzychodniaMedyczna.Model
             while (doctorEditor)
             {
                 Console.Write("    SPECJALIZACJA:  ");
+                if (doctorIndex != -1) SendKeys.SendWait(Mock._doctors[doctorIndex].Specialisation);
                 specialisation = Console.ReadLine();
                 if (OptionsManager.CheckString(specialisation) && OptionsManager.StringValidation(specialisation, 5)) doctorEditor = false;
             }
@@ -185,6 +200,7 @@ namespace PrzychodniaMedyczna.Model
             while (doctorEditor)
             {
                 Console.Write("    CENA ZA WIZYTĘ: ");
+                if (doctorIndex != -1) SendKeys.SendWait(Mock._doctors[doctorIndex].Price.ToString());
                 price = Console.ReadLine();
 
                 if (int.TryParse(price, out parsedPrice))
@@ -202,6 +218,7 @@ namespace PrzychodniaMedyczna.Model
             while (doctorEditor)
             {
                 Console.Write("    OPIS:\n    ");
+                if (doctorIndex != -1) SendKeys.SendWait(Mock._doctors[doctorIndex].Description);
                 description = Console.ReadLine();
                 if (OptionsManager.CheckString(description) && OptionsManager.StringValidation(description, 15)) doctorEditor = false;
             }
@@ -210,12 +227,20 @@ namespace PrzychodniaMedyczna.Model
             while (doctorEditor)
             {
                 Console.Write("    WIZYTY:         ");
+                if (doctorIndex != -1) SendKeys.SendWait(Mock._doctors[doctorIndex].VisitsAvailable.ToString());
                 visitsAvailable = Console.ReadLine();
 
                 if (int.TryParse(visitsAvailable, out parsedVisitsAvailable))
                 {
-                    if (parsedVisitsAvailable > 0) doctorEditor = false;
-                    else MenuManager.ColorText("    Podana liczba musi być większa od zera!\n", ConsoleColor.Red);
+                    if (doctorIndex == -1)
+                    {
+                        if (parsedVisitsAvailable > 0) doctorEditor = false;
+                        else MenuManager.ColorText("    Podana liczba musi być większa od zera!\n", ConsoleColor.Red);
+                    }
+                    else if (doctorIndex != -1 && parsedVisitsAvailable >= Mock._doctors[doctorIndex].VisitsTaken) {
+                        doctorEditor = false; 
+                    }
+                    else MenuManager.ColorText("    Podana liczba musi być większa lub równa liczbie zarezerwowanych wizyt!\n", ConsoleColor.Red);
                 }
                 else
                 {

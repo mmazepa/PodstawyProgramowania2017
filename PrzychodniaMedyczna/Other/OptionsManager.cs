@@ -25,6 +25,8 @@ namespace PrzychodniaMedyczna.Other
                 MenuManager.DisplayLogoAndMenu("doctorsMenu", "pay", Mock._doctors.Count);
 
                 Console.WriteLine("  Lista lekarzy:");
+                Mock._doctors.Sort((x, y) => x.Id.CompareTo(y.Id));
+
                 if (Mock._doctors.Count > 0)
                 {
                     int i = 1;
@@ -116,6 +118,7 @@ namespace PrzychodniaMedyczna.Other
                 MenuManager.DisplayLogoAndMenu("doctorsMenu", "resign", Mock.loggedUser.Visits.Count);
 
                 Console.WriteLine("\n  Lista zarezerwowanych wizyt:");
+                Mock.loggedUser.Visits.Sort((x, y) => x.DoctorId.CompareTo(y.DoctorId));
 
                 int i = 1;
                 int inAll = 0;
@@ -170,11 +173,14 @@ namespace PrzychodniaMedyczna.Other
                             case "1":
                                 foreach (Doctor doctor in Mock._doctors)
                                 {
-                                    if (doctor.Id == Mock.loggedUser.Visits[number - 1].DoctorId)
+                                    if (Mock.loggedUser.Visits.Count > number - 1)
                                     {
-                                        ChangeAmountOfMoney(Mock.loggedUser.Login, doctor.Price);
-                                        doctor.VisitsTaken--;
-                                        ModifyUserVisits(Mock.loggedUser.Login, doctor.Id, -1);
+                                        if (doctor.Id == Mock.loggedUser.Visits[number - 1].DoctorId)
+                                        {
+                                            ChangeAmountOfMoney(Mock.loggedUser.Login, doctor.Price);
+                                            doctor.VisitsTaken--;
+                                            ModifyUserVisits(Mock.loggedUser.Login, doctor.Id, -1);
+                                        }
                                     }
                                 }
                                 break;
@@ -441,6 +447,7 @@ namespace PrzychodniaMedyczna.Other
                 MenuManager.DisplayLogoAndMenu("adminDoctorsMenu");
 
                 Console.WriteLine("  Lista lekarzy:");
+                Mock._doctors.Sort((x, y) => x.Id.CompareTo(y.Id));
 
                 if (Mock._doctors.Count > 0)
                 {
@@ -449,7 +456,7 @@ namespace PrzychodniaMedyczna.Other
                     {
                         Console.WriteLine("\n    " + i + ") " + doctor.Name + ", " + doctor.Specialisation + ", " + doctor.Price + " zł/wizyta");
                         Console.WriteLine("       " + doctor.Description);
-                        Console.WriteLine("       " + doctor.VisitsTaken + "/" + doctor.VisitsAvailable);
+                        Console.WriteLine("       WIZYTY: " + doctor.VisitsTaken + "/" + doctor.VisitsAvailable);
                         i++;
                     }
                 }
@@ -531,7 +538,6 @@ namespace PrzychodniaMedyczna.Other
         {
             var user = Mock._users.FirstOrDefault(m => m.Login == login);
             int count = 0;
-            //UserVisit visitToRemove = new UserVisit();
 
             foreach (UserVisit visit in user.Visits)
             {
@@ -540,8 +546,6 @@ namespace PrzychodniaMedyczna.Other
                     visit.VisitsTaken = visit.VisitsTaken + anotherVisit;
                 }
                 else count++;
-
-                //if (visit.VisitsTaken == 0) visitToRemove = visit;
             }
 
             if (count == user.Visits.Count)
@@ -554,14 +558,22 @@ namespace PrzychodniaMedyczna.Other
                 user.Visits.Add(newVisit);
             }
 
+            int deletionIndex = -1;
+            for (int i = 0; i < user.Visits.Count; i++)
+            {
+                if(user.Visits[i].VisitsTaken == 0)
+                {
+                    deletionIndex = i;
+                }
+            }
+            if(deletionIndex != -1) user.Visits.RemoveAt(deletionIndex);
+
             Mock.loggedUser.Visits = user.Visits;
         }
 
         public static void CreateReport(string[] filedata)
         {
-            //string path = AppDomain.CurrentDomain.BaseDirectory + "\\report.doc";
             string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\report.doc";
-
 
             try
             {

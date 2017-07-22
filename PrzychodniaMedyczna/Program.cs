@@ -40,7 +40,7 @@ namespace PrzychodniaMedyczna
                     countPassw = 0;
 
                     MenuManager.DisplayLogoAndMenu("startMenu");
-                    
+
                     Console.Write("  Wybór: ");
                     wpis = Console.ReadLine();
 
@@ -102,6 +102,7 @@ namespace PrzychodniaMedyczna
                                 else
                                 {
                                     MenuManager.ColorText("\n  Hasło nieprawidłowe!\n\n", ConsoleColor.Red);
+                                    passw = string.Empty;
                                     countPassw++;
                                     OptionsManager.loggedIn = false;
                                 }
