@@ -109,6 +109,105 @@ namespace PrzychodniaMedyczna.Database
             }
         };
 
+        public static List<Advice> _advices = new List<Advice>()
+        {
+            new Advice()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Nie śpiesz się!",
+                Content = new string[]
+                {
+                    "Istotą zmiany Twoich nawyków jest konsekwencja",
+                    "i systematyczność. Lepiej powoli modyfikować kolejne",
+                    "elementy diety niż gwałtownie zmienić całą, a po",
+                    "tygodniu zniechęcony wrócić do pierwotnej. Lepiej",
+                    "powoli zacząć ćwiczyć niż rzucić się na głęboką wodę",
+                    "i mieć bolesne zakwasy przez pół tygodnia. Zastosuj",
+                    "metodę małych kroków – ewolucja, nie rewolucja!"
+                },
+                Likes = 0,
+                Dislikes = 0,
+                Other = 0
+            },
+
+            new Advice()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Zacznij ćwiczyć!",
+                Content = new string[]
+                {
+                    "Zanim jednak to zrobisz, uczciwie spisz ilość godzin,",
+                    "które przeznaczasz na aktywność fizyczną w ciągu tygodnia.",
+                    "Gdy stwierdzisz, że jest ona zbyt mała, to postaraj się",
+                    "o towarzystwo mobilizujące Cię do wspólnych ćwiczeń.",
+                    "Dowiedziono, że trening grupowy poprawia konsekwentność",
+                    "w uprawianiu sportu. Oprócz większej motywacji, dzięki",
+                    "której poprawi się Twoja kondycja fizyczna, stanowi",
+                    "również okazję do nawiązania nowych kontaktów i poznania",
+                    "ciekawych ludzi."
+                },
+                Likes = 0,
+                Dislikes = 0,
+                Other = 0
+            },
+
+            new Advice()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Zadbaj o odnowę swoich sił!",
+                Content = new string[]
+                {
+                    "Nie ma prostszej rzeczy na naszej liście, bo zadbanie o dobry,",
+                    "zdrowy sen nic nie kosztuje, a przynosi zbawienne efekty",
+                    "dla naszego organizmu. Gdy jesteś wyspany, to masz większą",
+                    "odporność na stres, jesteś bardziej opanowany, kreatywny",
+                    "i masz lepszy refleks. Nie tylko masz wrażenie bycia zdrowym,",
+                    "a po prostu taki jesteś."
+                },
+                Likes = 0,
+                Dislikes = 0,
+                Other = 0
+            },
+
+            new Advice()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Wypisz okoliczności złych nawyków!",
+                Content = new string[]
+                {
+                    "Nic tak nie pomaga we wdrożeniu zdrowego trybu życia, jak",
+                    "unikanie sytuacji, którym zazwyczaj towarzyszyły nieprawidłowe",
+                    "zachowania zdrowotne. Zastanów się, kiedy zjadasz o jedno",
+                    "lub dwa ciastka za dużo, w jakich okolicznościach wypijasz",
+                    "o jedno lub dwa piwa więcej, niż powinieneś? Unikaj sytuacji",
+                    "wystawiających Cię na pokusy, a doprowadzi Cię to do osiągnięcia",
+                    "celu w walce z niezdrowym trybem życia."
+                },
+                Likes = 0,
+                Dislikes = 0,
+                Other = 0
+            },
+
+            new Advice()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Ogranicz nałogi!",
+                Content = new string[]
+                {
+                    "Palenie papierosów i picie dużych ilości wysokoprocentowych",
+                    "alkoholi to znane nie od dziś najgroźniejsze czynniki ryzyka",
+                    "chorób cywilizacyjnych. Ilość ich negatywnych działań na zdrowie",
+                    "jest ogromna! Ogranicz nałogi już dziś! Jak to zrobić?",
+                    "Kieruj się naszymi poradami i bądź konsekwentny. A jeśli",
+                    "ograniczenie nałogu sprawia Ci trudności mimo szczerych chęci",
+                    "i podejmowanych wysiłków, to skontaktuj się z terapeutą."
+                },
+                Likes = 0,
+                Dislikes = 0,
+                Other = 0
+            }
+        };
+
         public static List<Pharmacy> _pharmacies = new List<Pharmacy>()
         {
             new Pharmacy()

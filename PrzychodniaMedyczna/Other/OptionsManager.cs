@@ -25,28 +25,35 @@ namespace PrzychodniaMedyczna.Other
                 MenuManager.DisplayLogoAndMenu("doctorsMenu", "pay", Mock._doctors.Count);
 
                 Console.WriteLine("  Lista lekarzy:");
-                int i = 1;
-                foreach (Doctor doctor in Mock._doctors)
+                if (Mock._doctors.Count > 0)
                 {
-                    Console.WriteLine("\n    " + i + ") " + doctor.Name);
-                    Console.WriteLine("       SPECJALIZACJA: " + doctor.Specialisation);
-                    Console.WriteLine("       CENA:          " + doctor.Price + "zł/wizyta");
-                    Console.WriteLine("       OPIS:");
-                    Console.WriteLine("       " + doctor.Description);
-                    Console.Write("       WIZYTY:        ");
-                    if (doctor.VisitsTaken == doctor.VisitsAvailable)
+                    int i = 1;
+                    foreach (Doctor doctor in Mock._doctors)
                     {
-                        MenuManager.ColorText(doctor.VisitsTaken + "/" + doctor.VisitsAvailable + "\n", ConsoleColor.Red);
+                        Console.WriteLine("\n    " + i + ") " + doctor.Name);
+                        Console.WriteLine("       SPECJALIZACJA: " + doctor.Specialisation);
+                        Console.WriteLine("       CENA:          " + doctor.Price + "zł/wizyta");
+                        Console.WriteLine("       OPIS:");
+                        Console.WriteLine("       " + doctor.Description);
+                        Console.Write("       WIZYTY:        ");
+                        if (doctor.VisitsTaken == doctor.VisitsAvailable)
+                        {
+                            MenuManager.ColorText(doctor.VisitsTaken + "/" + doctor.VisitsAvailable + "\n", ConsoleColor.Red);
+                        }
+                        else if (doctor.VisitsTaken >= (float)doctor.VisitsAvailable / 2)
+                        {
+                            MenuManager.ColorText(doctor.VisitsTaken + "/" + doctor.VisitsAvailable + "\n", ConsoleColor.Yellow);
+                        }
+                        else if (doctor.VisitsTaken >= 0)
+                        {
+                            MenuManager.ColorText(doctor.VisitsTaken + "/" + doctor.VisitsAvailable + "\n", ConsoleColor.Green);
+                        }
+                        i++;
                     }
-                    else if (doctor.VisitsTaken >= (float)doctor.VisitsAvailable / 2)
-                    {
-                        MenuManager.ColorText(doctor.VisitsTaken + "/" + doctor.VisitsAvailable + "\n", ConsoleColor.Yellow);
-                    }
-                    else if (doctor.VisitsTaken >= 0)
-                    {
-                        MenuManager.ColorText(doctor.VisitsTaken + "/" + doctor.VisitsAvailable + "\n", ConsoleColor.Green);
-                    }
-                    i++;
+                }
+                else
+                {
+                    Console.WriteLine("  Brak lekarzy do wyświetlenia!");
                 }
 
                 Console.Write("\n  Wybierz lekarza: ");
@@ -121,21 +128,19 @@ namespace PrzychodniaMedyczna.Other
                 {
                     foreach (Doctor doctor in Mock._doctors)
                     {
-                        int visits = 0;
                         foreach (UserVisit visit in Mock.loggedUser.Visits)
                         {
                             if (visit.DoctorId == doctor.Id)
                             {
                                 Doctor visitedDoctor = doctor;
-                                Console.Write("\n    " + i + ") " + visitedDoctor.Price + " zł x " + visitedDoctor.VisitsTaken + " = ");
-                                visits = visit.VisitsTaken;
+                                Console.Write("\n    " + i + ") " + visitedDoctor.Price + " zł x " + visit.VisitsTaken + " = ");
 
-                                int sum = doctor.Price * visits;
+                                int sum = visitedDoctor.Price * visit.VisitsTaken;
                                 if (sum < 10) Console.Write("   " + sum + " zł");
                                 else if (sum < 100) Console.Write("  " + sum + " zł");
                                 else if (sum < 1000) Console.Write(" " + sum + " zł");
 
-                                Console.Write("    << " + doctor.Name + " [" + doctor.Specialisation + "] >>");
+                                Console.Write("    << " + visitedDoctor.Name + " [" + visitedDoctor.Specialisation + "] >>");
                                 i++;
                                 inAll += sum;
                             }
@@ -154,7 +159,7 @@ namespace PrzychodniaMedyczna.Other
                 bool isNumeric = int.TryParse(wpis, out int number);
                 if (isNumeric && Enumerable.Range(1, Mock.loggedUser.Visits.Count).Contains(number))
                 {
-                    if (Mock._doctors[number - 1].VisitsTaken > 0)
+                    if (Mock.loggedUser.Visits[number - 1].VisitsTaken > 0)
                     {
                         MenuManager.ConfirmationMenu(number - 1, "resign");
                         Console.Write("  Odpowiedź: ");
@@ -163,9 +168,15 @@ namespace PrzychodniaMedyczna.Other
                         switch (wpis)
                         {
                             case "1":
-                                ChangeAmountOfMoney(Mock.loggedUser.Login, Mock._doctors[number - 1].Price);
-                                Mock._doctors[number - 1].VisitsTaken--;
-                                ModifyUserVisits(Mock.loggedUser.Login, Mock._doctors[number - 1].Id, -1);
+                                foreach (Doctor doctor in Mock._doctors)
+                                {
+                                    if (doctor.Id == Mock.loggedUser.Visits[number - 1].DoctorId)
+                                    {
+                                        ChangeAmountOfMoney(Mock.loggedUser.Login, doctor.Price);
+                                        doctor.VisitsTaken--;
+                                        ModifyUserVisits(Mock.loggedUser.Login, doctor.Id, -1);
+                                    }
+                                }
                                 break;
                             case "2":
                                 MenuManager.InfoAlert("  INFO: Transakcja anulowana na życzenie użytkownika!\n");
@@ -182,20 +193,42 @@ namespace PrzychodniaMedyczna.Other
                 }
                 else if (wpis == "doc")
                 {
-                    string[] visits = null;
+                    string visits = string.Empty;
+                    int sum = 0;
+
                     foreach(UserVisit visit in Mock.loggedUser.Visits)
                     {
-                        //visits = 
+                        foreach(Doctor doctor in Mock._doctors)
+                        {
+                            if(doctor.Id == visit.DoctorId)
+                            {
+                                sum = sum + (doctor.Price * visit.VisitsTaken);
+                                visits = visits + doctor.Price + " zł x " + visit.VisitsTaken + " = " + (doctor.Price * visit.VisitsTaken) + " zł   << " + doctor.Name + ", " + doctor.Specialisation + " >>\n";
+                            }
+                        }
                     }
 
-                    string[] report = {
-                        "ID:    " + Mock.loggedUser.Id,
-                        "NAME:  " + Mock.loggedUser.Name,
-                        "LOGIN: " + Mock.loggedUser.Login,
-                        "DATA:  " + DateTime.Now
+                    visits = visits + "RAZEM: " + sum + " zł\n\n";
 
-                    };
-                    CreateReport(report);
+                    if (Mock.loggedUser.Visits.Count > 0)
+                    {
+                        string[] report = {
+                            "ID:    " + Mock.loggedUser.Id,
+                            "NAME:  " + Mock.loggedUser.Name,
+                            "LOGIN: " + Mock.loggedUser.Login,
+                            "DATA:  " + DateTime.Now,
+                            "",
+                            "WIZYTY:",
+                            "",
+                            visits,
+                            "Dziękujemy za skorzystanie z naszych usług.\nZałoga MEDICINE S.A."
+                        };
+                        CreateReport(report);
+                    }
+                    else
+                    {
+                        MenuManager.InfoAlert("  INFO: Po co tworzyć raport, kiedy brak transakcji?\n");
+                    }
                 }
                 else if (wpis == "back")
                 {
@@ -211,17 +244,68 @@ namespace PrzychodniaMedyczna.Other
 
         public static void AdvicesList()
         {
-            Console.Clear();
-            MenuManager.DisplayLogoAndMenu("adviceMenu");
+            Random random = new Random();
+            int adviceNumber = random.Next(0, Mock._advices.Count);
+            int sum = Mock._advices[adviceNumber].Likes
+                + Mock._advices[adviceNumber].Dislikes
+                + Mock._advices[adviceNumber].Other;
+            int limit = 5;
+            bool adviceVoted = false;
 
-            Console.WriteLine("  .     |___________________________________");
-            Console.WriteLine("  | -----|- - -|''''|''''|''''|''''|''''|'##\\|__");
-            Console.WriteLine("  | - -  |  cc 6    5    4    3    2    1 ### __]==----------------------");
-            Console.WriteLine("  | -----|________________________________##/|");
-            Console.WriteLine("  '     |'''''''''''''''''''''''''''''''''`'\n");
+            while (!adviceVoted)
+            {
+                Console.Clear();
+                MenuManager.DisplayLogoAndMenu("adviceMenu");
 
-            MenuManager.ColorText("  Chwilowo brak porady medycznej, zapraszamy później!\n\n", ConsoleColor.Red);
-            MenuManager.ClearScreen();
+                Console.WriteLine("  " + (adviceNumber + 1) + ". " + Mock._advices[adviceNumber].Name + "\n");
+
+                foreach (string line in Mock._advices[adviceNumber].Content)
+                {
+                    Console.WriteLine("     " + line);
+                }
+
+                Console.Write("\n\n");
+                Console.Write("     LUBIĘ TO:       ");
+                MenuManager.AddSpaceBeforeNumber(Mock._advices[adviceNumber].Likes, limit);
+
+                Console.Write("     NIE LUBIĘ:      ");
+                MenuManager.AddSpaceBeforeNumber(Mock._advices[adviceNumber].Dislikes, limit);
+
+                Console.Write("     NIE MAM ZDANIA: ");
+                MenuManager.AddSpaceBeforeNumber(Mock._advices[adviceNumber].Other, limit);
+
+                Console.WriteLine("     ---------------------");
+                Console.Write("     ŁĄCZNIE:        ");
+                MenuManager.AddSpaceBeforeNumber(sum, limit);
+
+                Console.Write("\n\n");
+
+                MenuManager.ConfirmationVoteMenu();
+                Console.Write("  Odpowiedź: ");
+                wpis = Console.ReadLine();
+
+                switch (wpis)
+                {
+                    case "1":
+                        Mock._advices[adviceNumber].Likes += 1;
+                        MenuManager.InfoAlert("  INFO: Dziękujemy za pozytywną ocenę tej porady!\n");
+                        adviceVoted = true;
+                        break;
+                    case "2":
+                        Mock._advices[adviceNumber].Dislikes += 1;
+                        MenuManager.InfoAlert("  INFO: Przykro nam, że Ci się nie podoba. Może któraś z pozostałych będzie lepsza?\n");
+                        adviceVoted = true;
+                        break;
+                    case "3":
+                        Mock._advices[adviceNumber].Other += 1;
+                        MenuManager.InfoAlert("  INFO: Dziękujemy za wzięcie udziału w ankiecie, niezdecydowany użytkowniku!\n");
+                        adviceVoted = true;
+                        break;
+                    default:
+                        CommandNotFound(wpis);
+                        break;
+                }
+            }
         }
 
         public static void PharmaciesList()
@@ -357,13 +441,21 @@ namespace PrzychodniaMedyczna.Other
                 MenuManager.DisplayLogoAndMenu("adminDoctorsMenu");
 
                 Console.WriteLine("  Lista lekarzy:");
-                int i = 1;
-                foreach (Doctor doctor in Mock._doctors)
+
+                if (Mock._doctors.Count > 0)
                 {
-                    Console.WriteLine("\n    " + i + ") " + doctor.Name + ", " + doctor.Specialisation + ", " + doctor.Price + " zł/wizyta");
-                    Console.WriteLine("       " + doctor.Description);
-                    Console.WriteLine("       " + doctor.VisitsTaken + "/" + doctor.VisitsAvailable);
-                    i++;
+                    int i = 1;
+                    foreach (Doctor doctor in Mock._doctors)
+                    {
+                        Console.WriteLine("\n    " + i + ") " + doctor.Name + ", " + doctor.Specialisation + ", " + doctor.Price + " zł/wizyta");
+                        Console.WriteLine("       " + doctor.Description);
+                        Console.WriteLine("       " + doctor.VisitsTaken + "/" + doctor.VisitsAvailable);
+                        i++;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("  Brak lekarzy do wyświetlenia!");
                 }
 
                 Console.Write("\n  Odpowiedź: ");
@@ -372,7 +464,13 @@ namespace PrzychodniaMedyczna.Other
                 switch (wpis)
                 {
                     case "1":
-                        AddDoctor();
+                        Doctor.AddDoctor();
+                        break;
+                    case "2":
+                        Doctor.DoctorChoser("edit");
+                        break;
+                    case "3":
+                        Doctor.DoctorChoser("delete");
                         break;
                     case "back":
                         MenuManager.InfoAlert("  INFO: Wybrano powrót do poprzedniego ekranu.\n");
@@ -385,114 +483,6 @@ namespace PrzychodniaMedyczna.Other
             }
         }
 
-        public static void AddDoctor()
-        {
-            string firstName = string.Empty;
-            string lastName = string.Empty;
-            string specialisation = string.Empty;
-            string price = string.Empty;
-            int parsedPrice = 0;
-            string description = string.Empty;
-            string visitsAvailable = string.Empty;
-            int parsedVisitsAvailable = 0;
-
-            Console.Clear();
-            MenuManager.DisplayLogoAndMenu("adminAddDoctorMenu");
-
-            bool doctorEditor = true;
-            while (doctorEditor)
-            {
-                Console.Write("    IMIĘ:           ");
-                firstName = Console.ReadLine();
-                if(CheckIfNotEmpty(firstName) && StringValidation(firstName,3)) doctorEditor = false;
-            }
-
-            doctorEditor = true;
-            while (doctorEditor)
-            {
-                Console.Write("    NAZWISKO:       ");
-                lastName = Console.ReadLine();
-                if (CheckIfNotEmpty(lastName) && StringValidation(lastName,3)) doctorEditor = false;
-            }
-
-            doctorEditor = true;
-            while (doctorEditor)
-            {
-                Console.Write("    SPECJALIZACJA:  ");
-                specialisation = Console.ReadLine();
-                if (CheckIfNotEmpty(specialisation) && StringValidation(specialisation,5)) doctorEditor = false;
-            }
-
-            doctorEditor = true;
-            while (doctorEditor)
-            {
-                Console.Write("    CENA ZA WIZYTĘ: ");
-                price = Console.ReadLine();
-
-                if (int.TryParse(price, out parsedPrice))
-                {
-                    if (parsedPrice > 0) doctorEditor = false;
-                    else MenuManager.ColorText("    Podana liczba musi być większa od zera!\n", ConsoleColor.Red);
-                }
-                else
-                {
-                    MenuManager.ColorText("    Musisz podać liczbę!\n", ConsoleColor.Red);
-                }
-            }
-
-            doctorEditor = true;
-            while (doctorEditor)
-            {
-                Console.Write("    OPIS:\n    ");
-                description = Console.ReadLine();
-                if (CheckIfNotEmpty(description) && StringValidation(description,15)) doctorEditor = false;
-            }
-
-            doctorEditor = true;
-            while (doctorEditor)
-            {
-                Console.Write("    WIZYTY:         ");
-                visitsAvailable = Console.ReadLine();
-
-                if (int.TryParse(visitsAvailable, out parsedVisitsAvailable))
-                {
-                    if (parsedVisitsAvailable > 0) doctorEditor = false;
-                    else MenuManager.ColorText("    Podana liczba musi być większa od zera!\n", ConsoleColor.Red);
-                }
-                else
-                {
-                    MenuManager.ColorText("    Musisz podać liczbę!\n", ConsoleColor.Red);
-                }
-            }
-
-            Console.WriteLine("");
-
-            Console.WriteLine("  DODAWANIE DOKTORA ZAKOŃCZONE!");
-            Console.WriteLine("  WSZYSTKO OKEJ?\n");
-
-            Doctor newDoctor = new Doctor()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = firstName + " " + lastName,
-                Specialisation = specialisation,
-                Price = parsedPrice,
-                Description = description,
-                VisitsAvailable = parsedVisitsAvailable,
-                VisitsTaken = 0
-            };
-
-            Console.WriteLine("    IMIĘ I NAZWISKO: dr " + newDoctor.Name);
-            Console.WriteLine("    SPECJALIZACJA:   " + newDoctor.Specialisation);
-            Console.WriteLine("    CENA:            " + newDoctor.Price + " zł/wizyta");
-            Console.Write("    OPIS:\n    " + newDoctor.Description + "\n");
-            Console.WriteLine("    WIZYTY:          " + newDoctor.VisitsTaken + "/" + newDoctor.VisitsAvailable + "\n");
-
-            Mock._doctors.Add(newDoctor);
-
-            MenuManager.ColorText("  SUKCES: Dodawanie lekarza zakończone pomyślnie!\n", ConsoleColor.Green);
-            MenuManager.ClearScreen();
-        }
-
         public static bool CheckIfNotEmpty(string stringToCheck)
         {
             if (stringToCheck == null || stringToCheck == "")
@@ -501,6 +491,23 @@ namespace PrzychodniaMedyczna.Other
                 return false;
             }
             else return true;
+        }
+
+        public static bool CheckIfNumber(string stringToCheck)
+        {
+            bool isNumber = int.TryParse(stringToCheck, out int number);
+            if (isNumber)
+            {
+                MenuManager.ColorText("    To pole nie może być liczbą!\n", ConsoleColor.Red);
+                return false;
+            }
+            else return true;
+        }
+
+        public static bool CheckString(string stringToCheck)
+        {
+            if (CheckIfNotEmpty(stringToCheck) && CheckIfNumber(stringToCheck)) return true;
+            else return false;
         }
 
         public static bool StringValidation(string stringToCheck, int requiredLength)
@@ -524,7 +531,7 @@ namespace PrzychodniaMedyczna.Other
         {
             var user = Mock._users.FirstOrDefault(m => m.Login == login);
             int count = 0;
-            UserVisit visitToRemove = new UserVisit();
+            //UserVisit visitToRemove = new UserVisit();
 
             foreach (UserVisit visit in user.Visits)
             {
@@ -534,10 +541,8 @@ namespace PrzychodniaMedyczna.Other
                 }
                 else count++;
 
-                if (visit.VisitsTaken == 0) visitToRemove = visit;
+                //if (visit.VisitsTaken == 0) visitToRemove = visit;
             }
-
-            //user.Visits.Remove(visitToRemove);
 
             if (count == user.Visits.Count)
             {
@@ -548,18 +553,21 @@ namespace PrzychodniaMedyczna.Other
                 };
                 user.Visits.Add(newVisit);
             }
+
             Mock.loggedUser.Visits = user.Visits;
         }
 
         public static void CreateReport(string[] filedata)
         {
-            string path = AppDomain.CurrentDomain.BaseDirectory + "\\report.doc";
+            //string path = AppDomain.CurrentDomain.BaseDirectory + "\\report.doc";
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\report.doc";
+
 
             try
             {
                 File.WriteAllLines(path, filedata);
                 File.Open(path, FileMode.Open);
-                MenuManager.InfoAlert("  INFO: Stworzono nowy raport.\n");
+                MenuManager.InfoAlert("  INFO: Stworzono nowy raport w " + path + "\n");
             }
             catch
             {

@@ -24,12 +24,12 @@ Nale¿¹ do nich m.in.:
 * wybór lekarza i zarezerwowanie wizyty,
 * podgl¹d/podsumowanie i generowanie rachunku DOC,
 * rezygnacja z zarezerwowanych wizyt,
-* zasiêgniêcie porady medycznej z "bazy" dostêpnych porad,
+* przegl¹d i ocena losowej porady medycznej,
 * sprawdzenie aptek (adresu, telefonu, godzin otwarcia),
-* zabezpieczenie przed przypadkowym zamówieniem.
+* zabezpieczenie przed przypadkowym klikniêciem.
 
 Warto równie¿ nadmieniæ funkcjonalnoœæ konta administratora:
 
-* zarz¹dzanie kontami u¿ytkowników (na chwilê obecn¹ tylko wyœwietlanie listy),
-* dodawanie lekarzy do bazy (planowany rozwój do pe³nego CRUD'a),
+* wyœwietlanie listy zarejestrowanych u¿ytkowników,
+* CRUD lekarzy (dodawanie, edycja, usuwanie),
 * ...ci¹g dalszy nast¹pi...

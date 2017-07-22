@@ -117,7 +117,7 @@ namespace PrzychodniaMedyczna
                         {
                             MenuManager.ColorText("  Trzy próby zakończone niepowodzeniem, do widzenia!\n", ConsoleColor.Red);
                             MenuManager.ClearScreen();
-                            break;
+                            Environment.Exit(0);
                         }
                     }
 

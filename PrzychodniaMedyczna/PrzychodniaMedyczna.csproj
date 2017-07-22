@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database\Mock.cs" />
+    <Compile Include="Model\Advice.cs" />
     <Compile Include="Model\Doctor.cs" />
     <Compile Include="Model\Pharmacy.cs" />
     <Compile Include="Model\Resource.cs" />

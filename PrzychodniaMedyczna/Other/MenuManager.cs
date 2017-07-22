@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using PrzychodniaMedyczna.Database;
+using PrzychodniaMedyczna.Model;
 
 namespace PrzychodniaMedyczna.Other
 {
@@ -31,10 +32,8 @@ namespace PrzychodniaMedyczna.Other
             Console.WriteLine("  ██║╚██╔╝██║██╔══╝  ██║  ██║██║██║     ██║██║╚██╗██║██╔══╝    ");
             Console.WriteLine("  ██║ ╚═╝ ██║███████╗██████╔╝██║╚██████╗██║██║ ╚████║███████╗  ");
             Console.WriteLine("  ╚═╝     ╚═╝╚══════╝╚═════╝ ╚═╝ ╚═════╝╚═╝╚═╝  ╚═══╝╚══════╝  ");
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write("                          Ostatnia akcja: ");
             Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.Write(DateTime.Now + "\n");
+            Console.WriteLine("                                          " + DateTime.Now);
             Console.ResetColor();
         }
 
@@ -74,6 +73,10 @@ namespace PrzychodniaMedyczna.Other
                 case "adminAddDoctorMenu":
                     Console.Title = "Przychodnia medyczna: Dodawanie lekarza";
                     DisplayAdminAddDoctorMenu();
+                    break;
+                case "adminEditDoctorMenu":
+                    Console.Title = "Przychodnia medyczna: Edycja lekarza";
+                    DisplayAdminEditDoctorMenu();
                     break;
             }
         }
@@ -159,6 +162,9 @@ namespace PrzychodniaMedyczna.Other
             DisplayUserInfo();
             Console.WriteLine("  ╔═════════════════════════════════════════════════════╗");
 
+            Mock._users.Sort((x, y) => x.Name.CompareTo(y.Name));
+            Mock.loggedUser.Visits.Sort((x, y) => x.DoctorId.CompareTo(y.DoctorId));
+
             if (transaction == "pay")
             {
                 Console.WriteLine("  ║  ZAREZERWUJ WIZYTĘ:                                 ║");
@@ -186,7 +192,7 @@ namespace PrzychodniaMedyczna.Other
 
         public static void ConfirmationMenu(int doctorIndex, string transaction)
         {
-            string price = Mock._doctors[doctorIndex].Price + " zł?";
+            string price = string.Empty;
 
             Console.WriteLine("  ╔═════════════════════════════════════════════════════╗");
             Console.WriteLine("  ║  POTWIERDZENIE TRANSAKCJI [" + (doctorIndex + 1) + "]:                      ║");
@@ -194,12 +200,22 @@ namespace PrzychodniaMedyczna.Other
 
             if (transaction == "pay")
             {
+                price = Mock._doctors[doctorIndex].Price + " zł?";
+
                 while (price.Length <= 32) price = price + " ";
                 Console.WriteLine("  ║    Czy jesteś pewien, że chcesz zapłacić za wizytę  ║");
                 Console.WriteLine("  ║    u tego lekarza " + price + " ║");
             }
             else if (transaction == "resign")
             {
+                foreach(Doctor doctor in Mock._doctors)
+                {
+                    if (doctor.Id == Mock.loggedUser.Visits[doctorIndex].DoctorId)
+                    {
+                        price = doctor.Price + " zł?";
+                    }
+                }
+
                 while (price.Length <= 25) price = price + " ";
                 Console.WriteLine("  ║    Czy jesteś pewien, że chcesz zrezygnować z       ║");
                 Console.WriteLine("  ║    tej wizyty i odzyskać " + price + " ║");
@@ -214,13 +230,7 @@ namespace PrzychodniaMedyczna.Other
             DisplayUserInfo();
             Console.WriteLine("  ╔═════════════════════════════════════════════════════╗");
             Console.WriteLine("  ║  PORADA MEDYCZNA:                                   ║");
-            Console.WriteLine("  ║  Wyświetlono listę dostępnych porad, co chcesz      ║");
-            Console.WriteLine("  ║  zrobić?                                            ║");
-            Console.WriteLine("  ╠═════════════════════════════════════════════════════╣");
-            Console.WriteLine("  ║    1    - Porada nr 1                               ║");
-            Console.WriteLine("  ║    2    - Porada nr 2                               ║");
-            Console.WriteLine("  ║    3    - Porada nr 3                               ║");
-            Console.WriteLine("  ║    back - Powrót                                    ║");
+            Console.WriteLine("  ║  Losowo wybrana porada na dziś.                     ║");
             Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n");
         }
 
@@ -251,6 +261,8 @@ namespace PrzychodniaMedyczna.Other
             Console.WriteLine("  ║  zrobić?                                            ║");
             Console.WriteLine("  ╠═════════════════════════════════════════════════════╣");
             Console.WriteLine("  ║    1    - Dodaj lekarza                             ║");
+            Console.WriteLine("  ║    2    - Edytuj lekarza                            ║");
+            Console.WriteLine("  ║    3    - Usuń lekarza                              ║");
             Console.WriteLine("  ║    back - Powrót                                    ║");
             Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n");
         }
@@ -261,6 +273,16 @@ namespace PrzychodniaMedyczna.Other
             Console.WriteLine("  ╔═════════════════════════════════════════════════════╗");
             Console.WriteLine("  ║  DODAWANIE LEKARZA:                                 ║");
             Console.WriteLine("  ║  Dodawanie lekarza w toku... postępuj zgodnie z     ║");
+            Console.WriteLine("  ║  wyświetlanymi instrukcjami.                        ║");
+            Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n");
+        }
+
+        public static void DisplayAdminEditDoctorMenu()
+        {
+            DisplayUserInfo();
+            Console.WriteLine("  ╔═════════════════════════════════════════════════════╗");
+            Console.WriteLine("  ║  EDYCJA LEKARZA:                                    ║");
+            Console.WriteLine("  ║  Edycja lekarza w toku... postępuj zgodnie z        ║");
             Console.WriteLine("  ║  wyświetlanymi instrukcjami.                        ║");
             Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n");
         }
@@ -279,6 +301,16 @@ namespace PrzychodniaMedyczna.Other
             else if (option == "logout") Console.WriteLine("  ║  Czy na pewno chcesz się wylogować?                 ║");
 
             Console.WriteLine("  ║      1 - tak                2 - nie                 ║");
+            Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n");
+        }
+
+        public static void ConfirmationVoteMenu()
+        {
+            Console.WriteLine("  ╔═════════════════════════════════════════════════════╗");
+            Console.WriteLine("  ║  OCENA PORADY MEDYCZNEJ:                            ║");
+            Console.WriteLine("  ╠═════════════════════════════════════════════════════╣");
+            Console.WriteLine("  ║  Jak oceniasz przydatność powyższej porady?         ║");
+            Console.WriteLine("  ║  1 - lubię to   2 - nie lubię   3 - nie mam zdania  ║"); 
             Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n");
         }
 
@@ -309,6 +341,12 @@ namespace PrzychodniaMedyczna.Other
             {
                 Console.Write(character);
             }
+        }
+
+        public static void AddSpaceBeforeNumber(int number, int limit)
+        {
+            if (number.ToString().Length < limit) ManyChars(' ', limit - number.ToString().Length);
+            Console.Write(number + "\n");
         }
     }
 }
