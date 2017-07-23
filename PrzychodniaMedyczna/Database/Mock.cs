@@ -93,7 +93,7 @@ namespace PrzychodniaMedyczna.Database
                 Specialisation = "Pediatra",
                 Price = 100,
                 Description = "Świeżo upieczony doktor, rozprawę doktorską obronił w 2015 roku.",
-                VisitsAvailable = 5,
+                VisitsAvailable = 7,
                 VisitsTaken = 0
             },
 
@@ -104,7 +104,29 @@ namespace PrzychodniaMedyczna.Database
                 Specialisation = "Dermatolog",
                 Price = 175,
                 Description = "Godny uwagi, jeśli masz problemy skórne.",
-                VisitsAvailable = 5,
+                VisitsAvailable = 12,
+                VisitsTaken = 0
+            },
+
+            new Doctor()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "dr Karol Twarzyczka",
+                Specialisation = "Chirurg Plastyczny",
+                Price = 300,
+                Description = "Nie podoba Ci się Twój wygląd? Zapisz się już teraz!",
+                VisitsAvailable = 10,
+                VisitsTaken = 0
+            },
+
+            new Doctor()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "dr Mieczysław Ząbek",
+                Specialisation = "Stomatolog",
+                Price = 50,
+                Description = "Dbanie o ludzki uśmiech to jego specjalność.",
+                VisitsAvailable = 25,
                 VisitsTaken = 0
             }
         };

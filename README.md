@@ -31,5 +31,4 @@ Nale¿¹ do nich m.in.:
 Warto równie¿ nadmieniæ funkcjonalnoœæ konta administratora:
 
 * wyœwietlanie listy zarejestrowanych u¿ytkowników,
-* CRUD lekarzy (dodawanie, edycja, usuwanie),
-* ...ci¹g dalszy nast¹pi...
+* CRUD lekarzy (dodawanie, edycja, usuwanie).

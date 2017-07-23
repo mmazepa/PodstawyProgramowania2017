@@ -171,6 +171,8 @@ namespace PrzychodniaMedyczna.Other
                 Console.WriteLine("  ║  Wyświetlono listę lekarzy, co chcesz zrobić?       ║");
                 Console.WriteLine("  ╠═════════════════════════════════════════════════════╣");
                 Console.WriteLine("  ║    1-" + doctorsNum + "  - Wybór konkretnego lekarza                 ║");
+                Console.WriteLine("  ║    prev - Poprzednia strona                         ║");
+                Console.WriteLine("  ║    next - Następna strona                           ║");
             }
             else if (transaction == "resign")
             {
@@ -187,6 +189,9 @@ namespace PrzychodniaMedyczna.Other
 
         public static void DisplayUserInfo()
         {
+            if(Mock.loggedUser.IsAdmin)
+                ColorText("  " + Mock.loggedUser.Name + ", " + Mock.userType + "\n", Mock.color);
+            else
                 ColorText("  " + Mock.loggedUser.Name + ", " + Mock.userType + " [" + Mock.loggedUser.Wallet + "zł]\n", Mock.color);
         }
 

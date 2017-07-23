@@ -123,6 +123,28 @@ namespace PrzychodniaMedyczna.Model
             MenuManager.ClearScreen();
         }
 
+        public static void DisplayDoctor(int doctorIndex)
+        {
+            Console.WriteLine("\n    " + (doctorIndex + 1) + ") " + Mock._doctors[doctorIndex].Name);
+            Console.WriteLine("       SPECJALIZACJA: " + Mock._doctors[doctorIndex].Specialisation);
+            Console.WriteLine("       CENA:          " + Mock._doctors[doctorIndex].Price + "zł/wizyta");
+            Console.WriteLine("       OPIS:");
+            Console.WriteLine("       " + Mock._doctors[doctorIndex].Description);
+            Console.Write("       WIZYTY:        ");
+            if (Mock._doctors[doctorIndex].VisitsTaken == Mock._doctors[doctorIndex].VisitsAvailable)
+            {
+                MenuManager.ColorText(Mock._doctors[doctorIndex].VisitsTaken + "/" + Mock._doctors[doctorIndex].VisitsAvailable + "\n", ConsoleColor.Red);
+            }
+            else if (Mock._doctors[doctorIndex].VisitsTaken >= (float)Mock._doctors[doctorIndex].VisitsAvailable / 2)
+            {
+                MenuManager.ColorText(Mock._doctors[doctorIndex].VisitsTaken + "/" + Mock._doctors[doctorIndex].VisitsAvailable + "\n", ConsoleColor.Yellow);
+            }
+            else if (Mock._doctors[doctorIndex].VisitsTaken >= 0)
+            {
+                MenuManager.ColorText(Mock._doctors[doctorIndex].VisitsTaken + "/" + Mock._doctors[doctorIndex].VisitsAvailable + "\n", ConsoleColor.Green);
+            }
+        }
+
         public static void DoctorChoser(string whatToDo)
         {
             string decision = string.Empty;

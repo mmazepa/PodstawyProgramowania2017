@@ -18,39 +18,26 @@ namespace PrzychodniaMedyczna.Other
 
         public static void DoctorsList()
         {
+            int pageNumber = 0;
+
             doctorChoosing = true;
             while (doctorChoosing)
             {
+                int pages = (int)Convert.ToDecimal(Math.Ceiling((decimal)Mock._doctors.Count / 3));
+                int doctorIndex = pageNumber * 3;
+
                 Console.Clear();
                 MenuManager.DisplayLogoAndMenu("doctorsMenu", "pay", Mock._doctors.Count);
 
-                Console.WriteLine("  Lista lekarzy:");
+                Console.WriteLine("  Lista lekarzy:                     STRONA: " + (pageNumber + 1) + "/" + pages);
                 Mock._doctors.Sort((x, y) => x.Id.CompareTo(y.Id));
 
                 if (Mock._doctors.Count > 0)
                 {
-                    int i = 1;
-                    foreach (Doctor doctor in Mock._doctors)
+                    for (int i = 0; i < 3; i++)
                     {
-                        Console.WriteLine("\n    " + i + ") " + doctor.Name);
-                        Console.WriteLine("       SPECJALIZACJA: " + doctor.Specialisation);
-                        Console.WriteLine("       CENA:          " + doctor.Price + "zł/wizyta");
-                        Console.WriteLine("       OPIS:");
-                        Console.WriteLine("       " + doctor.Description);
-                        Console.Write("       WIZYTY:        ");
-                        if (doctor.VisitsTaken == doctor.VisitsAvailable)
-                        {
-                            MenuManager.ColorText(doctor.VisitsTaken + "/" + doctor.VisitsAvailable + "\n", ConsoleColor.Red);
-                        }
-                        else if (doctor.VisitsTaken >= (float)doctor.VisitsAvailable / 2)
-                        {
-                            MenuManager.ColorText(doctor.VisitsTaken + "/" + doctor.VisitsAvailable + "\n", ConsoleColor.Yellow);
-                        }
-                        else if (doctor.VisitsTaken >= 0)
-                        {
-                            MenuManager.ColorText(doctor.VisitsTaken + "/" + doctor.VisitsAvailable + "\n", ConsoleColor.Green);
-                        }
-                        i++;
+                        if(doctorIndex + i < Mock._doctors.Count)
+                            Doctor.DisplayDoctor(doctorIndex + i);
                     }
                 }
                 else
@@ -96,6 +83,26 @@ namespace PrzychodniaMedyczna.Other
                     {
                         MenuManager.InfoAlert("  INFO: Ten lekarz nie ma więcej dostępnych wizyt!\n");
                     }
+                }
+                else if (wpis == "prev")
+                {
+                    if (pageNumber > 0)
+                    {
+                        pageNumber--;
+                        MenuManager.InfoAlert("  INFO: Wybrano poprzednią stronę!\n");
+                    }
+                    else
+                        MenuManager.InfoAlert("  INFO: To jest pierwsza strona, nie da się cofnąć!\n");
+                }
+                else if (wpis == "next")
+                {
+                    if (pageNumber < pages - 1)
+                    {
+                        pageNumber++;
+                        MenuManager.InfoAlert("  INFO: Wybrano następną stronę!\n");
+                    }
+                    else
+                        MenuManager.InfoAlert("  INFO: To jest ostatnia strona, nie da się iść dalej!\n");
                 }
                 else if (wpis == "back")
                 {
