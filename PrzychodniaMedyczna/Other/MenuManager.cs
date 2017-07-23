@@ -314,6 +314,16 @@ namespace PrzychodniaMedyczna.Other
             Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n");
         }
 
+        public static void ConfirmationDoctorDeletionMenu(int doctorIndex)
+        {
+            Console.WriteLine("  ╔═════════════════════════════════════════════════════╗");
+            Console.WriteLine("  ║  POTWIERDZENIE USUNIĘCIA [" + doctorIndex + "]:                       ║");
+            Console.WriteLine("  ╠═════════════════════════════════════════════════════╣");
+            Console.WriteLine("  ║  Czy na pewno chcesz usunąć tego lekarza?           ║");
+            Console.WriteLine("  ║      1 - tak                2 - nie                 ║");
+            Console.WriteLine("  ╚═════════════════════════════════════════════════════╝\n");
+        }
+
         public static void ClearScreen()
         {
             Console.WriteLine("  Wciśnij ENTER, by kontynuować...");

@@ -110,7 +110,6 @@ namespace PrzychodniaMedyczna.Model
             Mock._doctors[doctorIndex].VisitsTaken = 0;
 
             DisplayDoctorInfo(doctorIndex);
-
             MenuManager.ColorText("  SUKCES: Edycja lekarza zakończona pomyślnie!\n", ConsoleColor.Green);
             MenuManager.ClearScreen();
         }
@@ -127,6 +126,7 @@ namespace PrzychodniaMedyczna.Model
         public static void DoctorChoser(string whatToDo)
         {
             string decision = string.Empty;
+            string wpis = string.Empty;
 
             Console.Write("  Którego? ");
             decision = Console.ReadLine();
@@ -140,7 +140,22 @@ namespace PrzychodniaMedyczna.Model
                 {
                     if (Mock._doctors[doctorIndex - 1].VisitsTaken == 0)
                     {
-                        DeleteDoctor(doctorIndex - 1);
+                        Console.WriteLine("");
+                        MenuManager.ConfirmationDoctorDeletionMenu(doctorIndex);
+                        Console.Write("  Odpowiedź: ");
+                        wpis = Console.ReadLine();
+
+                        switch (wpis) {
+                            case "1":
+                                DeleteDoctor(doctorIndex - 1);
+                                break;
+                            case "2":
+                                MenuManager.InfoAlert("  INFO: Anulowano usuwanie na prośbę użytkownika!\n");
+                                break;
+                            default:
+                                MenuManager.InfoAlert("  INFO: Odpowiedź nierozpoznana, na wszelki wypadek usuwanie anulowano!\n");
+                                break;
+                        }
                     }
                     else
                     {
